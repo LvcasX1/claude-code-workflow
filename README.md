@@ -692,20 +692,27 @@ Full hook reference: [Claude Code hooks documentation](https://code.claude.com/d
 
 An agent in this workflow is a specialized Claude invocation configured with a specific role, set of tools, and scope of authority. Rather than using a generic Claude session for every task, you create a purpose-built agent for each repository or domain.
 
-### How to Create an Agent in Claude Code
+Agents are defined as Markdown files with YAML frontmatter stored in `.claude/agents/`. Committing that directory makes the agents available to everyone who clones the repository — no manual registration required.
 
-Claude Code reads `CLAUDE.md` from the repository root at the start of every session. That file is the agent definition: it sets the role, constraints, tools, workflow rules, and any domain knowledge Claude should carry throughout the session.
+### How to Create an Agent
 
-Create `CLAUDE.md` at the root of the target repository:
+The fastest way is the `/agents` command inside a Claude Code session:
 
-```bash
-touch CLAUDE.md
+```
+> /agents
 ```
 
-Then populate it with the agent's identity and operating rules. The structure that works best:
+This opens an interactive interface where you name the agent, describe what it does, select which tools it can use, and pick a model. Claude Code writes the resulting file to `.claude/agents/<name>.md`.
+
+You can also create the file directly. The structure:
 
 ```markdown
-# Agent: <name>
+---
+name: <agent-name>
+description: <one-line description — used by the orchestrator to decide when to dispatch this agent>
+tools: Read, Write, Edit, Bash, Grep, Glob
+model: sonnet
+---
 
 ## Role
 <One paragraph: what this agent does, what it does not do, and its primary goal>
@@ -714,9 +721,6 @@ Then populate it with the agent's identity and operating rules. The structure th
 <Key facts about the codebase, architecture, conventions, or domain that Claude needs
 to do its job correctly — things not obvious from reading the code>
 
-## Tools and Permissions
-<Which tools are allowed, which paths are in scope, which commands can be run>
-
 ## Workflow Rules
 <Required steps before committing, testing conventions, lint requirements, etc.>
 
@@ -724,21 +728,19 @@ to do its job correctly — things not obvious from reading the code>
 <Files, directories, or systems that are off-limits>
 ```
 
-Run `/init` after writing the initial `CLAUDE.md` to let Claude read the codebase and expand the file with additional context it discovers:
-
-```bash
-claude
-> /init
-```
-
-Claude will add sections for project structure, detected dependencies, and inferred conventions, giving the agent a richer starting context for all future sessions.
+The frontmatter controls dispatch and execution. The `description` field is what the orchestrator reads when deciding which subagent to invoke — write it as a capability statement, not a title. The body is the agent's standing instructions, read at the start of every invocation.
 
 ### Example: Python LangChain Expert Agent
 
-The following `CLAUDE.md` creates an agent specialized in Python development with LangChain. It knows the framework conventions, enforces the project's chain architecture, and restricts itself from touching infrastructure.
+Saved as `.claude/agents/langchain-expert.md`:
 
 ```markdown
-# Agent: LangChain Service
+---
+name: langchain-expert
+description: Implements, debugs, and refactors LangChain chains, agents, tools, and memory components using the LCEL interface
+tools: Read, Write, Edit, Bash, Grep, Glob
+model: sonnet
+---
 
 ## Role
 You are a Python developer specializing in LangChain-based applications. Your job is to
@@ -757,11 +759,6 @@ modify deployment configuration, Docker files, or CI pipelines.
   + create_retrieval_chain pipeline. Do not use ConversationBufferWindowMemory or
   ConversationalRetrievalChain — both are removed in LangChain v1.
 
-## Tools and Permissions
-- Read, Write, Edit: src/, tests/
-- Bash: pip, pytest, ruff, mypy — no other shell commands
-- MCP: context7 for LangChain and LangGraph documentation
-
 ## Workflow Rules
 1. Before implementing any chain or agent, confirm the LCEL interface is used.
 2. Run the type checker before marking a task complete:
@@ -778,7 +775,7 @@ modify deployment configuration, Docker files, or CI pipelines.
 - pyproject.toml (dependency changes require a separate task and human approval)
 ```
 
-With this `CLAUDE.md` in place, every Claude Code session in that repository starts with a LangChain-aware agent that knows the codebase conventions, queries Context7 for live LangChain documentation, and enforces the correct testing and typing workflow before any commit.
+With this file committed, any Claude Code session in the repository can dispatch to `langchain-expert` as a subagent, or the orchestrator will invoke it automatically when a task matches its description.
 
 ---
 
