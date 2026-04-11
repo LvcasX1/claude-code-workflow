@@ -740,6 +740,8 @@ name: langchain-expert
 description: Implements, debugs, and refactors LangChain chains, agents, tools, and memory components using the LCEL interface
 tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
+mcpServers:
+  - context7
 ---
 
 ## Role
@@ -760,14 +762,16 @@ modify deployment configuration, Docker files, or CI pipelines.
   ConversationalRetrievalChain — both are removed in LangChain v1.
 
 ## Workflow Rules
-1. Before implementing any chain or agent, confirm the LCEL interface is used.
-2. Run the type checker before marking a task complete:
+1. Before implementing any chain or agent, query context7 for the current LangChain and
+   LangGraph API to avoid relying on deprecated interfaces.
+2. Confirm the LCEL pipe operator interface is used — never the legacy LLMChain class.
+3. Run the type checker before marking a task complete:
    mypy src/
-3. Run the linter and auto-fix:
+4. Run the linter and auto-fix:
    ruff check src/ --fix
-4. Run the test suite:
+5. Run the test suite:
    pytest tests/ -v
-5. All new public functions must have a docstring and type annotations.
+6. All new public functions must have a docstring and type annotations.
 
 ## Do Not Modify
 - docker-compose.yml
