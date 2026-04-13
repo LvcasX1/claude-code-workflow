@@ -34,8 +34,8 @@ graph TD
 curl -fsSL https://claude.ai/install.sh | bash
 
 # 2. Clone this repo and run the setup script
-git clone https://github.com/lvcas/agentic-development-presentation
-cd agentic-development-presentation
+git clone https://github.com/LvcasX1/claude-code-workflow
+cd  claude-code-workflow 
 ./setup.sh
 ```
 
@@ -112,6 +112,7 @@ brew install --cask claude-code
 ```
 
 > The npm package (`npm install -g @anthropic-ai/claude-code`) is deprecated. Use the native installer above. If you have an existing npm installation, migrate with:
+>
 > ```bash
 > curl -fsSL https://claude.ai/install.sh | bash
 > npm uninstall -g @anthropic-ai/claude-code
@@ -459,6 +460,7 @@ Up to 10 subagents run simultaneously in a single session. Each operates in its 
 The `superpowers:dispatching-parallel-agents` skill governs when subagents are dispatched. It prevents unnecessary parallelism (which wastes tokens) and enforces sequential execution when agents share state or file dependencies.
 
 Use subagents for:
+
 - Parallel codebase exploration before implementation
 - Isolated verification tasks (type checking, linting, tests)
 - Targeted research that would flood the main context
