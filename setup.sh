@@ -114,6 +114,18 @@ elif prompt_yn "Caveman reduces token usage 22-87% via compact syntax. Install i
   INSTALLED+=("Caveman")
 fi
 
+# mattpocock/skills (optional — grilling + handoff skills that sharpen plans before code)
+echo ""
+if ! $NODE_OK; then
+  warn "node not found — skipping mattpocock/skills (needs npx)"
+elif prompt_yn "Install mattpocock/skills (grill-me, grill-with-docs, handoff)? Sharpens plans before code."; then
+  info "Launching the skills installer (interactive — select grill-me, grill-with-docs, handoff, setup-matt-pocock-skills)..."
+  npx skills@latest add mattpocock/skills </dev/tty
+  ok "mattpocock/skills installer finished"
+  info "Run /setup-matt-pocock-skills once in a session to wire it to your tracker and docs."
+  INSTALLED+=("mattpocock/skills")
+fi
+
 # ── Section 3: MCP Servers ────────────────────────────────────────────────────
 step "MCP Servers"
 
@@ -217,7 +229,53 @@ elif prompt_yn "CCStatusLine shows model, context, and git state in your termina
   INSTALLED+=("CCStatusLine")
 fi
 
-# ── Section 5: Verification & Summary ────────────────────────────────────────
+# ── Section 5: Commit Rule (optional) ─────────────────────────────────────────
+step "Commit Rule"
+
+GLOBAL_CLAUDE_MD="$HOME/.claude/CLAUDE.md"
+COMMIT_RULE_MARKER="# claude-code-workflow: commit rule"
+
+echo ""
+if [[ -f "$GLOBAL_CLAUDE_MD" ]] && grep -qF "$COMMIT_RULE_MARKER" "$GLOBAL_CLAUDE_MD"; then
+  ok "Commit rule already present in ~/.claude/CLAUDE.md"
+elif prompt_yn "Add a global rule: atomic, short commits with NO co-author trailer?"; then
+  mkdir -p "$HOME/.claude"
+  cat >> "$GLOBAL_CLAUDE_MD" <<'EOF'
+
+# claude-code-workflow: commit rule
+## Commit rules
+- One logical change per commit. No "WIP" or "misc fixes" commits.
+- Subject: imperative mood, <= 50 chars. Body only to explain *why*.
+- Do NOT add a "Co-Authored-By" or "Generated with Claude Code" trailer.
+EOF
+  ok "Commit rule appended to ~/.claude/CLAUDE.md (applies to all projects)"
+  INSTALLED+=("Commit rule (~/.claude/CLAUDE.md)")
+fi
+
+# Optional hard enforcement via a commit-msg git hook in the current repo
+if command -v git &>/dev/null && git rev-parse --is-inside-work-tree &>/dev/null; then
+  HOOK_PATH="$(git rev-parse --git-path hooks)/commit-msg"
+  if [[ -f "$HOOK_PATH" ]] && grep -qF "claude-code-workflow" "$HOOK_PATH"; then
+    ok "commit-msg hook already installed in this repo"
+  elif prompt_yn "Also install a commit-msg git hook here to STRIP co-author trailers deterministically?"; then
+    if [[ -f "$HOOK_PATH" ]]; then
+      warn "A commit-msg hook already exists at $HOOK_PATH — skipping to avoid overwrite"
+    else
+      mkdir -p "$(dirname "$HOOK_PATH")"
+      cat > "$HOOK_PATH" <<'EOF'
+#!/usr/bin/env bash
+# claude-code-workflow: strip co-author / tool-attribution trailers before commit
+sed -i.bak -E '/^Co-Authored-By:.*Claude/d; /^🤖 Generated with/d' "$1"
+rm -f "$1.bak"
+EOF
+      chmod +x "$HOOK_PATH"
+      ok "commit-msg hook installed at $HOOK_PATH"
+      INSTALLED+=("commit-msg hook (this repo)")
+    fi
+  fi
+fi
+
+# ── Section 6: Verification & Summary ────────────────────────────────────────
 step "Verification"
 
 echo ""
