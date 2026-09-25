@@ -126,6 +126,30 @@ elif prompt_yn "Install mattpocock/skills (grill-me, grill-with-docs, handoff)? 
   INSTALLED+=("mattpocock/skills")
 fi
 
+# Graphify (optional — persistent knowledge graph of the repo, queried instead of re-reading files)
+echo ""
+if [[ -f "$HOME/.claude/skills/graphify/SKILL.md" ]]; then
+  ok "Graphify skill already installed"
+elif prompt_yn "Install Graphify (knowledge graph of your codebase, queried via /graphify)?"; then
+  if ! command -v graphify &>/dev/null; then
+    if command -v uv &>/dev/null; then
+      info "Installing graphifyy with uv..."
+      uv tool install graphifyy
+    elif command -v pipx &>/dev/null; then
+      info "Installing graphifyy with pipx..."
+      pipx install graphifyy
+    else
+      warn "uv or pipx not found — skipping Graphify (install one, then: uv tool install graphifyy)"
+    fi
+  fi
+  if command -v graphify &>/dev/null; then
+    graphify install --platform claude
+    ok "Graphify installed"
+    info "Run /graphify once in a repo to build the graph; 'graphify hook install' keeps it current."
+    INSTALLED+=("Graphify")
+  fi
+fi
+
 # ── Section 3: MCP Servers ────────────────────────────────────────────────────
 step "MCP Servers"
 
