@@ -119,7 +119,7 @@ echo ""
 if ! $NODE_OK; then
   warn "node not found — skipping mattpocock/skills (needs npx)"
 elif prompt_yn "Install mattpocock/skills (grill-me, grill-with-docs, handoff)? Sharpens plans before code."; then
-  info "Launching the skills installer (interactive — select grill-me, grill-with-docs, handoff, setup-matt-pocock-skills)..."
+  info "Launching the skills installer (interactive — select grill-me, grill-with-docs, handoff, to-spec, implement, code-review, setup-matt-pocock-skills)..."
   npx skills@latest add mattpocock/skills </dev/tty
   ok "mattpocock/skills installer finished"
   info "Run /setup-matt-pocock-skills once in a session to wire it to your tracker and docs."

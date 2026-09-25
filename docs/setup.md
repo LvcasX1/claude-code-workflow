@@ -115,7 +115,19 @@ The skills used in this workflow:
 | `grill-me` | user-invoked | Relentlessly interview you about a plan or design until every branch of the decision tree is resolved. Run it **after** producing a plan, before writing code. |
 | `grill-with-docs` | user-invoked | Same grilling, but cross-checked against your project's existing domain model and documented decisions (CONTEXT.md, ADRs), and it updates that documentation inline as decisions crystallise. |
 | `handoff` | user-invoked | Compact the current conversation into a handoff document another agent (or a future session) can pick up. See [Session Continuity](session-continuity.md). |
-| `improve-codebase-architecture` | user-invoked | Find deepening/refactoring opportunities informed by the domain language in CONTEXT.md. |
+| `improve-codebase-architecture` | user-invoked | Scan the codebase for deepening/refactoring opportunities, informed by the domain language in CONTEXT.md, and present them as an HTML report. |
+| `ask-matt` | user-invoked | Router: describe your situation and it tells you which skill in the collection fits. |
+| `to-spec` | user-invoked | Turn the current conversation into a spec and publish it to your issue tracker. |
+| `to-tickets` | user-invoked | Break a plan or spec into tracer-bullet tickets with blocking edges between them. |
+| `implement` | user-invoked | Build from a spec or ticket, driving TDD and running `code-review` before each commit. |
+| `wayfinder` | user-invoked | Plan large work as a shared map of decision tickets on the issue tracker. |
+| `code-review` | model-invoked | Two-axis review (Standards and Spec) run as parallel sub-agents. Not the same as the built-in `/code-review` — see [Code Review](code-review-and-git.md#mattpocock-code-review-the-two-axis-review). |
+| `diagnosing-bugs` | model-invoked | Disciplined loop for hard bugs: feedback → minimize → hypothesize → instrument → fix. |
+| `resolving-merge-conflicts` | model-invoked | Work through merge/rebase conflicts hunk by hunk, by intent. |
+
+Model-invoked skills load on their own when the task matches, or when you ask for them by name in plain language. User-invoked skills run as slash commands (`/to-spec`, `/implement 88`).
+
+The collection moves fast — `/ask-matt` or the [repo README](https://github.com/mattpocock/skills) has the current full list.
 
 The central idea behind `grill-me` is that *no one knows exactly what they want* until they are forced to defend each decision. Plan mode and Superpowers both produce a plan; grilling stress-tests it. See [Planning](planning.md#grilling-the-plan) for exactly where this slots into the loop.
 
