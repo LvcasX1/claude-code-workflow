@@ -8,6 +8,7 @@ For a one-command guided install, run [`setup.sh`](../setup.sh) from the repo ro
 - [Superpowers Skills](#superpowers-skills)
 - [mattpocock/skills](#mattpocockskills)
 - [Caveman](#caveman)
+- [Graphify](#graphify)
 - [MCP Servers](#mcp-servers)
 - [CCStatusLine](#ccstatusline)
 - [Hooks](#hooks)
@@ -151,6 +152,56 @@ stop caveman                  # back to normal prose
 ```
 
 Repo: [JuliusBrussee/caveman](https://github.com/JuliusBrussee/caveman)
+
+---
+
+## Graphify
+
+[Graphify](https://github.com/Graphify-Labs/graphify) turns a folder of code, docs, papers, images, or video into a persistent knowledge graph. It extracts entities and relationships (AST for code, an LLM pass for prose), clusters them into communities, and writes three outputs to `graphify-out/`:
+
+| Output | Use |
+|--------|-----|
+| `graph.json` | The queryable graph — what Claude traverses to answer questions |
+| `GRAPH_REPORT.md` | Plain-language summary: god nodes, communities, surprising connections |
+| `graph.html` | Interactive visualization for humans |
+
+Every edge is tagged `EXTRACTED`, `INFERRED`, or `AMBIGUOUS`, so you can tell what was read directly from source and what was guessed.
+
+Why it matters for agentic work: instead of Claude grepping and reading dozens of files to rebuild its mental model every session, it queries a map that already exists. The graph persists on disk, so the second session starts where the first one ended.
+
+Install the CLI (Python package `graphifyy`), then copy the skill into Claude Code:
+
+```bash
+uv tool install graphifyy        # or: pipx install graphifyy
+graphify install --platform claude
+```
+
+Build the graph once per repo, then query it:
+
+```
+/graphify                          # full pipeline on the current directory
+/graphify --update                 # incremental: re-extract only changed files
+/graphify query "how does auth reach the database?"
+/graphify path "AuthModule" "Database"
+/graphify explain "RateLimiter"
+```
+
+Keep it current and always on:
+
+```bash
+graphify hook install     # post-commit hook: rebuilds the graph after every commit (code only, no LLM)
+graphify claude install   # writes a ## graphify section to CLAUDE.md so Claude checks the graph first
+```
+
+To expose the graph to other agents as tools (`query_graph`, `get_neighbors`, `shortest_path`, …), register it as an MCP server:
+
+```bash
+claude mcp add graphify -- graphify-mcp graphify-out/graph.json
+```
+
+Add `graphify-out/` to `.gitignore` unless you want to share the graph with the team — the post-commit hook ships a merge driver for teams that commit it.
+
+See [The Workflow → Building Knowledge](workflow.md#building-knowledge) for where the graph fits in the loop.
 
 ---
 

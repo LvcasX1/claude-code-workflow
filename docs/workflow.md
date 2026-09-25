@@ -65,6 +65,23 @@ claude mcp list
 
 Full walkthrough in [Creating Your Own MCP](creating-mcp.md). The trade-off (why a tool call beats reading files) is laid out in [Setup → MCP vs codebase reading](setup.md#mcp-vs-codebase-reading).
 
+### A knowledge graph of the repo
+
+A custom MCP covers knowledge that lives outside the code. For knowledge that lives *in* the code — how modules connect, which files are central, what calls what — [Graphify](setup.md#graphify) builds it automatically. Run it once when you first open a repository:
+
+```
+/graphify
+```
+
+It writes `graphify-out/graph.json` and a `GRAPH_REPORT.md` that names the god nodes and communities. From then on, the Research phase starts with a graph query instead of a grep-and-read sweep:
+
+```
+/graphify query "where is the retry policy applied to outbound requests?"
+/graphify path "OrderService" "PaymentGateway"
+```
+
+Claude gets a scoped subgraph with file and line citations, then reads only the files that matter. Install the post-commit hook (`graphify hook install`) so the graph tracks the code, and `graphify claude install` so every future session checks the graph before answering codebase questions.
+
 ---
 
 ## Skills and Plan Mode

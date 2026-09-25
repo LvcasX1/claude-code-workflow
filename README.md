@@ -10,6 +10,7 @@ graph TD
     A --> C[MCP Servers]
     A --> D[Agent Dispatch]
     A --> E[Dynamic Workflows]
+    A --> F[Knowledge Graph]
 
     B --> B1[Plan Mode]
     B --> B2[Brainstorming]
@@ -25,6 +26,9 @@ graph TD
 
     E --> E1[Orchestration Script]
     E --> E2[Adversarial Verify]
+
+    F --> F1[Graphify]
+    F --> F2[Post-commit Rebuild]
 ```
 
 ---
@@ -43,7 +47,7 @@ cd claude-code-workflow
 ./setup.sh
 ```
 
-The script installs plugins, walks you through MCP selection, collects API keys, optionally installs the grilling skills and a commit-rule hook, and verifies everything works. Re-running it skips steps that are already done.
+The script installs plugins, walks you through MCP selection, collects API keys, optionally installs the grilling skills, Graphify, and a commit-rule hook, and verifies everything works. Re-running it skips steps that are already done.
 
 **Option B — manual minimal setup:**
 
@@ -82,7 +86,7 @@ The guide is split into focused topics under [`docs/`](docs/).
 
 | Doc | What it covers |
 |-----|----------------|
-| **[Setup](docs/setup.md)** | Installing the CLI, Superpowers, the [mattpocock/skills](https://github.com/mattpocock/skills) grilling skills, Caveman, MCP servers, CCStatusLine, and hooks. |
+| **[Setup](docs/setup.md)** | Installing the CLI, Superpowers, the [mattpocock/skills](https://github.com/mattpocock/skills) grilling skills, Caveman, Graphify, MCP servers, CCStatusLine, and hooks. |
 | **[Creating Agents by Repo](docs/creating-agents.md)** | Purpose-built per-repo subagents: definition files, model/effort/isolation. |
 | **[Creating Your Own MCP](docs/creating-mcp.md)** | Build a project-context MCP server in TypeScript end to end. |
 
@@ -90,7 +94,7 @@ The guide is split into focused topics under [`docs/`](docs/).
 
 | Doc | What it covers |
 |-----|----------------|
-| **[The Workflow](docs/workflow.md)** | The Research → Plan → Execute → Review → Ship loop, repo init, building knowledge, and agent dispatch. |
+| **[The Workflow](docs/workflow.md)** | The Research → Plan → Execute → Review → Ship loop, repo init, building knowledge (custom MCP + Graphify knowledge graph), and agent dispatch. |
 | **[Planning: Plan Mode vs Superpowers](docs/planning.md)** | The two planning approaches compared, when to use which, and where the `grill-me` grilling step fits. |
 | **[Prompting](docs/prompting.md)** | The skill-first, MCP-second, task-last prompting pattern. |
 | **[Code Review & Git Flow](docs/code-review-and-git.md)** | The review loop (`/code-review` with `--comment` / `--fix`, `/simplify`, two-axis review) and commit discipline (atomic, no co-authoring). |
@@ -114,6 +118,7 @@ The guide is split into focused topics under [`docs/`](docs/).
 | Claude Code Best Practice | Foundational patterns: subagents, commands, skills, and the Research → Plan → Execute → Review → Ship loop | [shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice) |
 | Superpowers | Skills plugin system for Claude Code | [obra/superpowers](https://github.com/obra/superpowers) |
 | mattpocock/skills | Grilling, planning, implementation, and review skills (`grill-me`, `grill-with-docs`, `handoff`, `to-spec`, `implement`, `code-review`) | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| Graphify | Turns a repo (code, docs, media) into a persistent, queryable knowledge graph | [Graphify-Labs/graphify](https://github.com/Graphify-Labs/graphify) |
 | Context7 | Live library documentation for Claude | [upstash/context7](https://github.com/upstash/context7) |
 | Model Context Protocol SDK | SDK for building MCP servers | [modelcontextprotocol/typescript-sdk](https://github.com/modelcontextprotocol/typescript-sdk) |
 | CCStatusLine | Claude Code status line integration | [sirmalloc/ccstatusline](https://github.com/sirmalloc/ccstatusline) |
