@@ -93,7 +93,7 @@ The guide is split into focused topics under [`docs/`](docs/).
 | **[The Workflow](docs/workflow.md)** | The Research → Plan → Execute → Review → Ship loop, repo init, building knowledge, and agent dispatch. |
 | **[Planning: Plan Mode vs Superpowers](docs/planning.md)** | The two planning approaches compared, when to use which, and where the `grill-me` grilling step fits. |
 | **[Prompting](docs/prompting.md)** | The skill-first, MCP-second, task-last prompting pattern. |
-| **[Code Review & Git Flow](docs/code-review-and-git.md)** | The review loop and commit discipline (atomic, no co-authoring). |
+| **[Code Review & Git Flow](docs/code-review-and-git.md)** | The review loop (`/code-review` with `--comment` / `--fix`, `/simplify`, two-axis review) and commit discipline (atomic, no co-authoring). |
 
 ### Make it durable
 
@@ -113,7 +113,7 @@ The guide is split into focused topics under [`docs/`](docs/).
 | Claude Code | Anthropic's official CLI for Claude | [anthropics/claude-code](https://github.com/anthropics/claude-code) |
 | Claude Code Best Practice | Foundational patterns: subagents, commands, skills, and the Research → Plan → Execute → Review → Ship loop | [shanraisshan/claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice) |
 | Superpowers | Skills plugin system for Claude Code | [obra/superpowers](https://github.com/obra/superpowers) |
-| mattpocock/skills | Grilling, handoff, and planning skills (`grill-me`, `grill-with-docs`, `handoff`) | [mattpocock/skills](https://github.com/mattpocock/skills) |
+| mattpocock/skills | Grilling, planning, implementation, and review skills (`grill-me`, `grill-with-docs`, `handoff`, `to-spec`, `implement`, `code-review`) | [mattpocock/skills](https://github.com/mattpocock/skills) |
 | Context7 | Live library documentation for Claude | [upstash/context7](https://github.com/upstash/context7) |
 | Model Context Protocol SDK | SDK for building MCP servers | [modelcontextprotocol/typescript-sdk](https://github.com/modelcontextprotocol/typescript-sdk) |
 | CCStatusLine | Claude Code status line integration | [sirmalloc/ccstatusline](https://github.com/sirmalloc/ccstatusline) |
